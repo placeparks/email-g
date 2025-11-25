@@ -22,9 +22,21 @@ const server = new SMTPServer({
                 // parsed.to is an object or array. We need to handle it.
                 // For MVP, just take the text representation
                 const toAddress = parsed.to ? parsed.to.text : 'unknown';
+                
+                // Extract email and name from parsed.from
+                let fromEmail = parsed.from.text;
+                let fromName = null;
+                
+                // parsed.from.value is an array of address objects
+                if (parsed.from && parsed.from.value && parsed.from.value.length > 0) {
+                    const fromAddr = parsed.from.value[0];
+                    fromEmail = fromAddr.address || parsed.from.text;
+                    fromName = fromAddr.name || null;
+                }
 
                 const newEmail = new Email({
-                    from: parsed.from.text,
+                    from: fromEmail,
+                    fromName: fromName,
                     to: toAddress,
                     subject: parsed.subject,
                     text: parsed.text,
