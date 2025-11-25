@@ -13,6 +13,12 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
+        // Validate email domain - only allow @miracmail.com
+        const allowedDomain = '@miracmail.com';
+        if (!email.toLowerCase().endsWith(allowedDomain)) {
+            return res.status(400).json({ msg: `Only emails ending with ${allowedDomain} are allowed` });
+        }
+
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ msg: 'User already exists' });
