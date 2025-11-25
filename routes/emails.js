@@ -24,10 +24,11 @@ router.post('/send', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         const from = user.email;
+        const fromName = user.name;
 
         // Send mail with defined transport object
         const info = await transporter.sendMail({
-            from: from, // sender address
+            from: `"${fromName}" <${from}>`, // sender address with name
             to: to, // list of receivers
             subject: subject, // Subject line
             text: text, // plain text body
@@ -39,6 +40,7 @@ router.post('/send', auth, async (req, res) => {
         // We also want to save a copy in the "Sent" folder for the sender
         const sentEmail = new Email({
             from,
+            fromName,
             to,
             subject,
             text,
